@@ -1,0 +1,5 @@
+-DDEBUG
+-mavx2
+-c
+-O2
+-g
