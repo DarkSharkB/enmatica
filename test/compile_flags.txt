@@ -1,0 +1,4 @@
+-DDEBUG
+-mavx2
+-O2
+-I../include

@@ -1,0 +1,11 @@
+-DDEBUG
+-DENMA_IMPLEMENTATION
+-DUSE_SIMD
+-DfUSE_MEM_ALIGNED
+-DUSE_DEG
+-mavx2
+-mfma
+-std=c++17
+-c
+-O2
+-g
