@@ -1,0 +1,6 @@
+.vscode
+bin/*
+lib/*
+test/gtest/
+enma.bat
+TODO.md
