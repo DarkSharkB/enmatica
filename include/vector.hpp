@@ -9,19 +9,19 @@
 #pragma once
 
 /* 													Integer Vectors																*/
-#include "vectors/ivec2.hpp"
-#include "vectors/ivec3.hpp"
-#include "vectors/ivec4.hpp"
+#include "core/vectors/ivec2.hpp"
+#include "core/vectors/ivec3.hpp"
+#include "core/vectors/ivec4.hpp"
 
 /*												Unsigned Integer Vectors														*/
-#include "vectors/uvec2.hpp"
-#include "vectors/uvec3.hpp"
-#include "vectors/uvec4.hpp"
+#include "core/vectors/uvec2.hpp"
+#include "core/vectors/uvec3.hpp"
+#include "core/vectors/uvec4.hpp"
 
 /* 										Single-Precision Floating Point Vectors 												*/
-#include "vectors/fvec2.hpp"
-#include "vectors/fvec3.hpp"
-#include "vectors/fvec4.hpp"
+#include "core/vectors/fvec2.hpp"
+#include "core/vectors/fvec3.hpp"
+#include "core/vectors/fvec4.hpp"
 
 
 /* 										Double-Precision Floating Point Vectors 												*/

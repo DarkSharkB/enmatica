@@ -32,30 +32,42 @@ using uin64 = unsigned long long;
 using flt32 = float;    // Single-Precision Floating Point Number
 using flt64 = double;   // Double-Precision Floating Point Number
 
+/* Boolean Vector Types */
+
+using bvec1 = bln8;
+struct bvec2;
+struct bvec3;
+struct bvec4;
+
 /* Integer Vector Types */
 
+using ivec1 = int32;
 struct ivec2;
 struct ivec3;
 struct ivec4;
 
 /* Unsigned Integer Vector Types */
 
+using uvec1 = uin32;
 struct uvec2;
 struct uvec3;
 struct uvec4;
 
 /* Single-Precision Floating-Point Vector Types */
 
+using fvec1 = flt32;
 struct fvec2;
 struct fvec3;
 struct fvec4;
 
+using vec1 = fvec1;
 using vec2 = fvec2;
 using vec3 = fvec3;
 using vec4 = fvec4;
 
 /* Double-Precision Floating-Point Vector Types */
 
+using dvec1 = flt64;
 struct dvec2;
 struct dvec3;
 struct dvec4;

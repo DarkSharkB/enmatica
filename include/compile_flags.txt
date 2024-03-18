@@ -1,5 +1,10 @@
 -DDEBUG
+-DENMA_IMPL
+-DUSE_SIMD_SPEC
+-DUSE_AUTO_DEG
+-DfUSE_MEM_ALIGNED
 -mavx2
+-std=c++17
 -c
 -O2
 -g

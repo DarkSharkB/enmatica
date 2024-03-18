@@ -9,5 +9,5 @@
 #pragma once
 
 /* 										        Floating Point Quaternions 												        */
-#include "quaternions/fquat.hpp"
+#include "core/quaternions/fquat.hpp"
 // TODO: Not so soon... #include "quaternions/dquat.hpp"
