@@ -1,21 +1,63 @@
 #pragma once
 #include "../enma.hpp"
 
+/*          Avoids Windows fuckery      */
+#undef near
+#undef far
+/*                                     */
+
+/**
+ * \brief 
+ * 
+ * \param eye 
+ * \param target 
+ * \param up
+ * \return mat4 
+ */
+mat4 LookAt(const vec3& eye, const vec3& target, const vec3& up = vec3::up);
+
+/**
+ * \brief 
+ * 
+ * \param fovy 
+ * \param aspectRatio 
+ * \param near 
+ * \param far 
+ * \return mat4 
+ */
+mat4 Perspective(flt32 fovy, flt32 aspectRatio, flt32 near, flt32 far);
+
+/**
+ * \brief 
+ * 
+ * \param width 
+ * \param height 
+ * \param near 
+ * \param far 
+ * \return mat4 
+ */
+mat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far);
+
+/**
+ * \brief 
+ * 
+ * \param left 
+ * \param right 
+ * \param bottom 
+ * \param top 
+ * \param near 
+ * \param far 
+ * \return mat4 
+ */
+mat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 near, flt32 far);
+
 #ifdef USE_LH_YU
-mat4 LookAt(vec3 eye, vec3 target);
-mat4 FPSCam(vec3 eye, flt32 pitch, flt32 yaw);
-
-mat4 Frustum(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 zNear, flt32 zFar);
-mat4 Perspective(flt32 fovy, flt32 aspect, flt32 zNear, flt32 zFar);
-mat4 Orthographic(flt32 width, flt32 height, flt32 zNear, flt32 zFar);
-mat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 cNear, flt32 cFar);
-
 #ifdef ENMA_IMPLEMENTATION
-mat4 LookAt(vec3 eye, vec3 target)
+mat4 LookAt(const vec3& eye, const vec3& target, const vec3& up)
 {
     vec3 eyeAt = target - eye;
     vec3 zaxis = Normalise(eyeAt);
-    vec3 xaxis = Cross({0.0f, 1.0f, 0.0f}, zaxis);
+    vec3 xaxis = Cross(up, zaxis);
     vec3 yaxis = Cross(zaxis, xaxis);
 
     return 
@@ -27,73 +69,101 @@ mat4 LookAt(vec3 eye, vec3 target)
     };
 }
 
-/*mat4 FPSCam(vec3 eye, flt32 pitch, flt32 yaw)
+mat4 Perspective(flt32 fovy, flt32 aspectRatio, flt32 near, flt32 far)
 {
-    flt32 pitchRad = ToRadians(pitch);
-    flt32 yawRad = ToRadians(yaw);
-    flt32 cosPitch = cos(pitchRad);
-    flt32 sinPitch = sin(pitchRad);
-    flt32 cosYaw = cos(yawRad);
-    flt32 sinYaw = sin(yawRad);
+    #ifdef USE_DEG
+    const flt32 fovyAngle = ToRadians(fovy);
+    #else
+    const flt32 fovyAngle = fovy;
+    #endif
 
-    return mat4(1.0f);
-}*/
+    const flt32 focal = 1.0f / std::tan(fovyAngle * 0.5f);
+    
+    #ifdef USE_REV_DEPTH
+    const flt32 nearRAhead = near / (far - near);
 
-mat4 Frustum(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 zNear, flt32 zFar)
-{
     return
     {
-        (2.0f * zNear) / (right - left), 0.0f, 0.0f, 0.0f,
-        0.0f, (2.0f * zNear) / (top - bottom), 0.0f, 0.0f,
-        -(right + left) / (right - left), -(top + bottom) / (top - bottom), zFar / (zFar - zNear), 1.0f,
-        0.0f, 0.0f, -(zFar * zNear) / (zFar - zNear), 0.0f
+        focal, 0.0f,   0.0f,               0.0f,
+        0.0f,           -focal * aspectRatio, 0.0f,               0.0f,
+        0.0f,           0.0f,   -nearRAhead,        1.0f,
+        0.0f,           0.0f,   far * nearRAhead,  0.0f
     };
+    #else
+    const flt32 farRAhead = far / (far - near);
+
+    return
+    {
+        focal,          0.0f,                   0.0f,               0.0f,
+        0.0f,           -focal * aspectRatio,   0.0f,               0.0f,
+        0.0f,           0.0f,                   farRAhead,          1.0f,
+        0.0f,           0.0f,                   -near * farRAhead,  0.0f
+    };
+    #endif
 }
 
-mat4 Perspective(flt32 fovy, flt32 aspect, flt32 cNear, flt32 cFar)
+mat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far)
 {
-    const flt32 focal = 1.0f / std::tan(fovy * 0.5f);
-    const flt32 nearby = cFar / (cFar - cNear);
-
-    return 
-    {    
-        focal / aspect, 0.0f, 0.0f, 0.0f, 
-        0.0f, -focal, 0.0f, 0.0f,
-        0.0f, 0.0f, nearby, 1.0f,
-        0.0f, 0.0f, -cNear * nearby, 0.0f
-    };
-}
-
-mat4 Orthographic(flt32 width, flt32 height, flt32 cNear, flt32 cFar)
-{
-    //const flt32 nearby = zNear / (zNear - zFar);
-    //const flt32 nearby = (1.0f - zNear) / (zFar - zNear);
-    //const flt32 nearby = (1.0f - zFar) / (zNear - zFar);
     const flt32 aspectRatio = width / (flt32)height;
-    const flt32 nearby = -cNear / (cFar - cNear);
-    //const flt32 nearby = (zFar - zNear) * zNear;
+
+    
+    #ifdef USE_REV_DEPTH
+    const flt32 rBehind = 1.0f / (near - far);
 
     return 
     {    
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, -1.0f * aspectRatio, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f / (cFar - cNear), 0.0f, 
-        0.0f, 0.0f, nearby, 1.0f
+        1.0f,   0.0f,                 0.0f,               0.0f,
+        0.0f,   -1.0f * aspectRatio,  0.0f,               0.0f,
+        0.0f,   0.0f,                 rBehind,            0.0f, 
+        0.0f,   0.0f,                 -far * rBehind,    1.0f
     };
+
+    #else
+    const flt32 rAhead = 1.0f / (far - near);
+
+    return 
+    {    
+        1.0f,   0.0f,                 0.0f,               0.0f,
+        0.0f,   -1.0f * aspectRatio,  0.0f,               0.0f,
+        0.0f,   0.0f,                 rAhead,             0.0f, 
+        0.0f,   0.0f,                 -near * rAhead,    1.0f
+    };
+    #endif
 }
 
-mat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 cNear, flt32 cFar) 
+mat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 near, flt32 far) 
 {
+    const flt32 rHorizontal = 1.0f / (right - left);
+    const flt32 rVertical = 1.0f / (top - bottom);
+
+    #ifdef USE_REV_DEPTH
+    const flt32 rBehind = 1.0f / (near - far);
+
     return 
     {
-        2.0f / (right - left), 0.0f, 0.0f, 0.0f,
+        2.0f * rHorizontal,             0.0f,                           0.0f,               0.0f,
 
-        0.0f, -2.0f / (top - bottom), 0.0f, 0.0f,
+        0.0f,                           -2.0f * rVertical,              0.0f,               0.0f,
 
-        0.0f, 0.0f, 1.0f / (cFar - cNear), 0.0f,
+        0.0f,                           0.0f,                           rBehind,            0.0f,
 
-        -(right + left) / (right - left), (top + bottom) / (top - bottom), -cNear / (cFar - cNear), 1.0f
+        -(right + left) * rHorizontal,  -(top + bottom) * rVertical,    -far * rBehind,    1.0f
     };
+
+    #else
+    const flt32 rAhead = 1.0f / (far - near);
+
+    return 
+    {
+        2.0f * rHorizontal,             0.0f,                           0.0f,               0.0f,
+
+        0.0f,                           -2.0f * rVertical,              0.0f,               0.0f,
+
+        0.0f,                           0.0f,                           rAhead,             0.0f,
+
+        -(right + left) * rHorizontal,  -(top + bottom) * rVertical,    -near * rAhead,    1.0f
+    };
+    #endif
 }
 #endif
 #endif

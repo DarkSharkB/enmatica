@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "../../base.hpp"
+#include "../vectors/fvec3.hpp"
 #include "../../empch.hpp"
 
 struct ALIGN(32) dquat
@@ -16,40 +16,37 @@ struct ALIGN(32) dquat
 	{
 		struct 
 		{
-			flt64 w;
-			flt64 x;
-			flt64 y;
-			flt64 z;
+			flt64 w, x, y, z;
 		};
 		flt64 arr[4];
 	};
 
 public:
-	dquat(const dquat &qt);
+	dquat(const dquat& qt);
 	dquat(const flt64 val = 0.0f);
 	dquat(const flt64 fw, const flt64 fx, const flt64 fy = 0.0f, const flt64 fz = 0.0f);
-	dquat(const flt64 w, const vec3 xyz);
+	dquat(const flt64 w, const vec3& xyz);
 	
-	dquat operator+(const dquat other);
-	dquat operator+=(const dquat other);
-	dquat operator-(const dquat other);
-	dquat operator-=(const dquat other);
-	dquat operator*(const dquat &other);
+	dquat operator+(const dquat& other);
+	dquat& operator+=(const dquat& other);
+	dquat operator-(const dquat& other);
+	dquat& operator-=(const dquat& other);
+	dquat operator*(const dquat& other);
 	dquat operator*(const flt64 val);
-	dquat operator*=(const flt64 val);
+	dquat& operator*=(const flt64 val);
 	dquat operator/(const flt64 val);
-	dquat operator/=(const flt64 val);
+	dquat& operator/=(const flt64 val);
 
-	static dquat Conjugate(const dquat &q);
-	static dquat Normalise(dquat q);
-	static dquat Inverse(const dquat &q);
-	static dquat Rotate(flt64 angle, const vec3 &axis);
+	static dquat Conjugate(const dquat& q);
+	static dquat Normalise(dquat& q);
+	static dquat Inverse(const dquat& q);
+	static dquat Rotate(flt64 angle, const vec3& axis);
 	static dquat ToQuaternion(vec3 rot);
-	static vec3 ToEulerAngles(const dquat &qt);
-	static mat4x4 ToRotationMatrix(const dquat &qt);
+	static vec3 ToEulerAngles(const dquat& qt);
+	static mat4x4 ToRotationMatrix(const dquat& qt);
 
 	#ifdef DEBUG
-	friend std::ostream &operator<<(std::ostream &os, dquat qt)
+	friend std::ostream& operator<<(std::ostream& os, const dquat& qt)
 	{
 		os << "( W: " << qt.w << "\tX: " << qt.x << "\tY: " << qt.y << "\tZ: " << qt.z << " )";
 
@@ -59,7 +56,7 @@ public:
 };
 
 #ifdef ENMA_IMPLEMENTATION
-	dquat::dquat(const dquat &qt)
+	dquat::dquat(const dquat& qt)
 	{
 		*this = qt;
 	}
@@ -70,7 +67,7 @@ public:
 
 	dquat::dquat(const flt64 fw, const flt64 fx, const flt64 fy, const flt64 fz) : w(fw), x(fx), y(fy), z(fz) {}
 
-	dquat::dquat(const flt64 w, const vec3 xyz)
+	dquat::dquat(const flt64 w, const vec3& xyz)
 	{
 		this->w = w;
 		this->x = xyz.x;
@@ -78,12 +75,12 @@ public:
 		this->z = xyz.z;
 	}
 
-	dquat dquat::operator+(const dquat other)
+	dquat dquat::operator+(const dquat& other)
 	{
 		return { this->w + other.w, this->x + other.x, this->y + other.y, this->z + other.z };
 	}
 
-	dquat dquat::operator+=(const dquat other)
+	dquat& dquat::operator+=(const dquat& other)
 	{
 		this->w += other.w;
 		this->x += other.x;
@@ -93,12 +90,12 @@ public:
 		return *this;
 	}
 
-	dquat dquat::operator-(const dquat other)
+	dquat dquat::operator-(const dquat& other)
 	{
 		return { this->w - other.w, this->x - other.x, this->y - other.y, this->z - other.z };
 	}
 
-	dquat dquat::operator-=(const dquat other)
+	dquat& dquat::operator-=(const dquat& other)
 	{
 		this->w -= other.w;
 		this->x -= other.x;
@@ -108,7 +105,7 @@ public:
 		return *this;
 	}
 
-	dquat dquat::operator*(const dquat &other)
+	dquat dquat::operator*(const dquat& other)
 	{
 		return 
 		{
@@ -124,7 +121,7 @@ public:
 		return { w * val, x * val, y * val, z * val };
 	}
 
-	dquat dquat::operator*=(const flt64 val)
+	dquat& dquat::operator*=(const flt64 val)
 	{
 		this->w *= val;
 		this->x *= val;
@@ -141,7 +138,7 @@ public:
 		return { w * div, x * div, y * div, z * div };
 	}
 
-	dquat dquat::operator/=(const flt64 val)
+	dquat& dquat::operator/=(const flt64 val)
 	{
 		const flt64 div = 1.0f / val;
 
@@ -153,19 +150,19 @@ public:
 		return *this;
 	}
 
-	dquat dquat::Conjugate(const dquat &q)
+	dquat dquat::Conjugate(const dquat& q)
 	{
 		return { q.w, -q.x, -q.y, -q.z };
 	}
 
-	dquat dquat::Normalise(dquat q)
+	dquat dquat::Normalise(dquat& q)
 	{
 		const flt64 mag = std::sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
 
 		return q / mag;
 	}
 
-	dquat dquat::Inverse(const dquat &q)
+	dquat dquat::Inverse(const dquat& q)
 	{
 		const flt64 mag2 = q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z;
 

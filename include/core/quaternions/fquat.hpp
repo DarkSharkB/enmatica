@@ -7,10 +7,10 @@
  */
 
 #pragma once
+#include "../../empch.hpp"
 #include "../vectors/fvec3.hpp"
 #include "../matrices/fmat4x4.hpp"
 #include "../../base.hpp"
-#include "../../empch.hpp"
 #include "../../trignometry.hpp"
 
 struct ALIGN(16) fquat
@@ -41,6 +41,7 @@ public:
 	fquat operator/(const flt32 val) const;
 	fquat& operator/=(const flt32 val);
 
+
 	flt32 Dot(const fquat& other) const;
 	fquat Conjugate() const;
 	fquat Normalise() const;
@@ -48,6 +49,8 @@ public:
 
 	vec3 ToEulerAngles() const;
 	mat4x4 ToRotationMatrix() const;
+
+	friend fvec3 operator*(const vec3& v, const quat& q);
 
 	#ifdef DEBUG
 	friend std::ostream& operator<<(std::ostream& os, const fquat& q)
@@ -233,7 +236,7 @@ fquat Inverse(const fquat& q)
 
 fquat ToQuaternion(const vec3& eulerAngles)
 {
-	#if defined(USE_AUTO_DEG)
+	#ifdef USE_DEG
 	const vec3 heuler = ToRadians(eulerAngles) * 0.5f; 	// A little optimisation, not much
 	#else
 	const vec3 heuler = eulerAngles * 0.5f;
@@ -254,6 +257,13 @@ fquat ToQuaternion(const vec3& eulerAngles)
 		sY * cX * cZ - cY * sX * sZ,
 		cY * cX * sZ - sY * sX * cZ
 	};
+	/*return
+	{
+		cX * cY * cZ - sX * sY * sZ,
+		sX * cY * cZ + cX * sY * sZ,
+		cX * sY * cZ - sX * cY * sZ,
+		cX * cY * sZ + sX * sY * cZ
+	};*/
 }
 
 vec3 fquat::ToEulerAngles() const
@@ -279,7 +289,16 @@ vec3 fquat::ToEulerAngles() const
 		bank = atan2(this->x * this->y + this->w * this->z, hmX2 - z2);
 	}
 
-	return vec3(pitch, heading, bank);
+	auto sanitize = [](flt32 v) -> flt32
+	{
+        return v + 0.0f;
+    };
+
+	#ifdef USE_DEG
+	return ToDegrees(vec3(sanitize(pitch), sanitize(heading), sanitize(bank)));
+	#else
+	return { sanitize(pitch), sanitize(heading), sanitize(bank) };
+	#endif
 }
 
 vec3 ToEulerAngles(const fquat& q)
@@ -305,7 +324,16 @@ vec3 ToEulerAngles(const fquat& q)
 		bank = atan2(q.x * q.y + q.w * q.z, hmX2 - z2);
 	}
 
-	return { pitch, heading, bank };
+	auto sanitize = [](flt32 v) -> flt32
+	{
+        return v + 0.0f;
+    };
+
+	#ifdef USE_DEG
+	return ToDegrees(vec3(sanitize(pitch), sanitize(heading), sanitize(bank)));
+	#else
+	return { sanitize(pitch), sanitize(heading), sanitize(bank) };
+	#endif
 }
 
 mat4x4 fquat::ToRotationMatrix() const
@@ -325,13 +353,15 @@ mat4x4 fquat::ToRotationMatrix() const
 
 	return
 	{
-		1 - 2 * (y2 + z2),	2 * (xy + wz), 		2 * (xz - wy), 		0.0f,
-		2 * (xy - wz),		1 - 2 * (x2 + z2),	2 * (yz + wx), 		0.0f,
-		2 * (xz + wy),		2 * (yz - wx), 		1 - 2 * (x2 + y2), 	0.0f,
+		1 - 2 * (y2 + z2),	2 * (xy - wz), 		2 * (xz + wy), 		0.0f,
+		2 * (xy + wz),		1 - 2 * (x2 + z2),	2 * (yz - wx), 		0.0f,
+		2 * (xz - wy),		2 * (yz + wx), 		1 - 2 * (x2 + y2), 	0.0f,
 		0.0f, 				0.0f, 				0.0f, 				1.0f
 	};
 }
 
+
+// Something is wrong...
 mat4x4 ToRotationMatrix(const fquat& q)
 {
 	const flt32 x2 = q.x * q.x;
@@ -349,10 +379,20 @@ mat4x4 ToRotationMatrix(const fquat& q)
 
 	return
 	{
-		1 - 2 * (y2 + z2),	2 * (xy + wz), 		2 * (xz - wy), 		0.0f,
-		2 * (xy - wz),		1 - 2 * (x2 + z2),	2 * (yz + wx), 		0.0f,
-		2 * (xz + wy),		2 * (yz - wx), 		1 - 2 * (x2 + y2), 	0.0f,
+		1 - 2 * (y2 + z2),	2 * (xy - wz), 		2 * (xz + wy), 		0.0f,
+		2 * (xy + wz),		1 - 2 * (x2 + z2),	2 * (yz - wx), 		0.0f,
+		2 * (xz - wy),		2 * (yz + wx), 		1 - 2 * (x2 + y2), 	0.0f,
 		0.0f, 				0.0f, 				0.0f, 				1.0f
 	};
+}
+
+
+fvec3 operator*(const vec3& v, const quat& q)
+{
+	quat vQuat = quat(0.0, v);
+	quat qConj = Conjugate(q);
+	quat result = q * vQuat * qConj;
+
+	return vec3(result.x, result.y, result.z);
 }
 #endif

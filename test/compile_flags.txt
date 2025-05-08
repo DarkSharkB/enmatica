@@ -1,4 +1,6 @@
 -DDEBUG
 -mavx2
+-mfma
 -O2
 -I../include
+-I../external

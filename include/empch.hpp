@@ -23,5 +23,5 @@
 // For Hardware Intrinsics
 #include <intrin.h>
 
+#include "base.hpp"
 #include "types.hpp"
-#include "log.hpp"

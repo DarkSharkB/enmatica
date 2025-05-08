@@ -7,7 +7,6 @@
  */
 
 #pragma once
-#include "../../base.hpp"
 #include "../../empch.hpp"
 #include "../simd_helpers.hpp"
 #include "swizzle.hpp"
