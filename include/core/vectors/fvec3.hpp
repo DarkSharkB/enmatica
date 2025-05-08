@@ -7,10 +7,9 @@
  */
 
 #pragma once
-#include "fvec2.hpp"
-#include "../../base.hpp"
 #include "../../empch.hpp"
 #include "../simd_helpers.hpp"
+#include "fvec2.hpp"
 #include "swizzle.hpp"
 
 struct ALIGN(16) fvec3
@@ -54,7 +53,7 @@ struct ALIGN(16) fvec3
 	 * \param val Value to initialize x, y and z components.
 	 *			  Defaults to 0.0f if not provided.
 	 */
-	explicit fvec3(flt32 val = 0.0f);
+	fvec3(flt32 val = 0.0f);
 	/**
 	 * Array constructor.
 	 * 
@@ -246,6 +245,12 @@ struct ALIGN(16) fvec3
     }
 
 	/**
+	 * \brief Calculates the length of the given vector
+	 * 
+	 * \return The length of the vector
+	 */
+	flt32 Length();
+	/**
 	 * Normalises the vector.
 	 *
 	 * \return Reference to the modified fvec3 after normalisation.
@@ -385,6 +390,7 @@ fvec3 Cross(const fvec3& v1, const fvec3& v2);
  * \return The distance between the first fvec3 `v1` and the second fvec3 `v2`.
  */
 flt32 Distance(const fvec3& v1, const fvec3& v2);
+flt32 Length(const fvec3& v);
 
 #ifdef USE_SIMD
 fvec3 Lerp(const fvec3& a, const fvec3& b, flt32 t);
@@ -640,11 +646,37 @@ flt32 Distance(const fvec3& v1, const fvec3& v2)
 {
 	__m128 lv1 = _mm_sub_ps(v1._vals, v2._vals);
 
-	lv1 = _mm_dp_ps(lv1, lv1, 0xFF);
+	lv1 = _mm_dp_ps(lv1, lv1, 0x77);
 
 	lv1 = _mm_sqrt_ps(lv1);
 
 	return lv1[0];
+}
+
+flt32 fvec3::Length()
+{
+	__m128 v = this->_vals;
+
+	__m128 vv = _mm_mul_ps(v, v);
+
+	v = _mm_dp_ps(vv, vv, 0x77);
+
+	v = _mm_sqrt_ps(v);
+
+	return v[0];
+}
+
+flt32 Length(const fvec3& v)
+{
+	__m128 vl = v._vals;
+
+	__m128 vlvl = _mm_mul_ps(vl, vl);
+
+	vl = _mm_dp_ps(vlvl, vlvl, 0x77);
+
+	vl = _mm_sqrt_ps(vl);
+
+	return vl[0];
 }
 
 fvec3 fvec3::Lerp(const fvec3& b, flt32 t)

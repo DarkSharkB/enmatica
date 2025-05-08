@@ -7,7 +7,6 @@
  */
 
 #pragma once
-#include "../../base.hpp"
 #include "../../empch.hpp"
 
 struct ALIGN(8) uvec2
@@ -17,6 +16,10 @@ struct ALIGN(8) uvec2
 		struct 
 		{
 			uin32 x, y;
+		};
+		struct 
+		{
+			uin32 r, g;
 		};
 		uin32 arr[2];
 	};

@@ -1,6 +1,7 @@
 .vscode
-bin/*
-lib/*
-test/gtest/
+build/bin/*
+build/lib/*
+build/temp/*
+external/gtest/*
 enma.bat
 TODO.md

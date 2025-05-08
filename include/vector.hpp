@@ -9,11 +9,13 @@
 #pragma once
 
 /* 													Integer Vectors																*/
+// Untested
 #include "core/vectors/ivec2.hpp"
 #include "core/vectors/ivec3.hpp"
 #include "core/vectors/ivec4.hpp"
 
 /*												Unsigned Integer Vectors														*/
+// Untested
 #include "core/vectors/uvec2.hpp"
 #include "core/vectors/uvec3.hpp"
 #include "core/vectors/uvec4.hpp"
@@ -25,7 +27,7 @@
 
 
 /* 										Double-Precision Floating Point Vectors 												*/
-// TODO: Soon
+// TODO: Maybe...
 /*#include "vectors/dvec2.hpp"
 #include "vectors/dvec3.hpp"
 #include "vectors/dvec4.hpp"*/

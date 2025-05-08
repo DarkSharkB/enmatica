@@ -7,10 +7,9 @@
  */
 
 #pragma once
+#include "../../empch.hpp"
 #include "uvec2.hpp"
 #include "uvec3.hpp"
-#include "../../base.hpp"
-#include "../../empch.hpp"
 
 struct ALIGN(16) uvec4
 {
@@ -20,11 +19,15 @@ struct ALIGN(16) uvec4
         {
             uin32 x, y, z, w;
         };
+		struct 
+		{
+			uin32 r, g, b, a;
+		};
         uin32 arr[4];
-        __m128i_u g;
+        //__m128i_u g;
     };
 
-    uvec4(const uvec4 &v);
+    uvec4(const uvec4& v);
     uvec4(const uin32 val = 0U);
     uvec4(const uin32 ux, const uin32 uy, const uin32 uz, const uin32 uw);
 	uvec4(const uvec2& xy, const uvec2& zw);

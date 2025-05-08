@@ -7,10 +7,9 @@
  */
 
 #pragma once
+#include "../../empch.hpp"
 #include "ivec2.hpp"
 #include "ivec3.hpp"
-#include "../../base.hpp"
-#include "../../empch.hpp"
 
 struct ALIGN(16) ivec4
 {
@@ -19,6 +18,10 @@ struct ALIGN(16) ivec4
         struct
         {
             int32 x, y, z, w;
+        };
+		struct
+        {
+            int32 r, g, b, a;
         };
         int32 arr[4];
 		#ifdef USE_SIMD

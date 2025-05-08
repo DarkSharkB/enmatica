@@ -7,7 +7,6 @@
  */
 
 #pragma once
-#include "../../base.hpp"
 #include "../../empch.hpp"
 
 #define CONCATENATE(a, b) a ## b
@@ -16,6 +15,7 @@
 
 #define MAKE_XYZW_COMPONENT(a) COMPONENT_XYZW_ ## a
 #define MAKE_RGBA_COMPONENT(a) COMPONENT_RGBA_ ## a
+#define MAKE_UV_COMPONENT(a) COMPONENT_UV_ ## a
 
 #define COMPONENT_XYZW_0 x
 #define COMPONENT_XYZW_1 y
@@ -26,6 +26,9 @@
 #define COMPONENT_RGBA_1 g
 #define COMPONENT_RGBA_2 b
 #define COMPONENT_RGBA_3 a
+
+#define COMPONENT_UV_0 u
+#define COMPONENT_UV_1 v
 
 #define COMBINE_2(a, b) CONCATENATE(a, b)
 #define COMBINE_3(a, b, c) CONCATENATE_3(a, b, c)
@@ -39,12 +42,14 @@
 #define CONCATENATE_RGBA_3_COMPONENTS(a, b, c) COMBINE_3(MAKE_RGBA_COMPONENT(a), MAKE_RGBA_COMPONENT(b), MAKE_RGBA_COMPONENT(c))
 #define CONCATENATE_RGBA_4_COMPONENTS(a, b, c, d) COMBINE_4(MAKE_RGBA_COMPONENT(a), MAKE_RGBA_COMPONENT(b), MAKE_RGBA_COMPONENT(c), MAKE_RGBA_COMPONENT(d))
 
-template<typename OutType, typename Type, uin32 A, uin32 B, uin32 Size>
+#define CONCATENATE_UV_2_COMPONENTS(a, b) COMBINE_2(MAKE_UV_COMPONENT(a), MAKE_UV_COMPONENT(b))
+
+template<typename InType, typename Type, uin32 A, uin32 B, uin32 Size>
 struct swizzle2
 {
     Type arr[Size];
 
-    OutType operator=(const OutType& v)
+    InType operator=(const InType& v)
     {
         static_assert(A != B, "Cannot assign to vector of identical swizzle. Must be different.");
         arr[A] = v.x;
@@ -53,6 +58,12 @@ struct swizzle2
         return *this;
     }
 
+    operator InType() const
+    {
+        return InType(arr[A], arr[B]);
+    }
+
+    template<typename OutType>
     operator OutType() const
     {
         return OutType(arr[A], arr[B]);
@@ -78,12 +89,12 @@ struct swizzle2
     swizzle2<outType, primitiveType, a, b, 4> CONCATENATE_XYZW_2_COMPONENTS(a, b);                \
     swizzle2<outType, primitiveType, a, b, 4> CONCATENATE_RGBA_2_COMPONENTS(a, b);
 
-template<typename OutType, typename Type, uin32 A, uin32 B, uin32 C, uin32 Size>
+template<typename InType, typename Type, uin32 A, uin32 B, uin32 C, uin32 Size>
 struct swizzle3
 {
     Type arr[Size];
 
-    OutType operator=(const OutType& v)
+    InType operator=(const InType& v)
     {
         static_assert(A != B && B != C && C != A, "Cannot assign to vector of identical swizzle. Must be different.");
         arr[A] = v.x;
@@ -93,6 +104,12 @@ struct swizzle3
         return *this;
     }
 
+    operator InType() const
+    {
+        return InType(arr[A], arr[B], arr[C]);
+    }
+
+    template<typename OutType>
     operator OutType() const
     {
         return OutType(arr[A], arr[B], arr[C]);
@@ -118,12 +135,12 @@ struct swizzle3
     swizzle3<outType, primitiveType, a, b, c, 4> CONCATENATE_XYZW_3_COMPONENTS(a, b, c);          \
     swizzle3<outType, primitiveType, a, b, c, 4> CONCATENATE_RGBA_3_COMPONENTS(a, b, c);
 
-template<typename OutType, typename Type, uin32 A, uin32 B, uin32 C, uin32 D, uin32 Size>
+template<typename InType, typename Type, uin32 A, uin32 B, uin32 C, uin32 D, uin32 Size>
 struct swizzle4
 {
     Type arr[Size];
 
-    OutType operator=(const OutType& v)
+    InType operator=(const InType& v)
     {
         static_assert(A != B && B != C && C != D && D != A, "Cannot assign to vector of identical swizzle. Must be different.");
         arr[A] = v.x;
@@ -134,6 +151,12 @@ struct swizzle4
         return *this;
     }
 
+    operator InType() const
+    {
+        return InType(arr[A], arr[B], arr[C], arr[D]);
+    }
+
+    template<typename OutType>
     operator OutType() const
     {
         return OutType(arr[A], arr[B], arr[C], arr[D]);

@@ -7,10 +7,9 @@
  */
 
 #pragma once
+#include "../../empch.hpp"
 #include "bvec2.hpp"
 #include "bvec3.hpp"
-#include "../../base.hpp"
-#include "../../empch.hpp"
 
 struct bvec4
 {

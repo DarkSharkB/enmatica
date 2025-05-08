@@ -1,7 +1,7 @@
 /**                          Enmatica Library for Mathematical & Graphical Applications                    
  * @author DarkShark
  * @brief The Main Header file of the Enmatica library
- * @version 0.7.5
+ * @version 0.77.2025
  * 
  * @copyright Copyright (c) 202X Villainous Softworks
  * 

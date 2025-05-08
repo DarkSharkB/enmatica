@@ -7,13 +7,10 @@
  */
 
 #pragma once
-#include "../../base.hpp"
 #include "../../empch.hpp"
 #include "../simd_helpers.hpp"
 #include "swizzle.hpp"
 #include "bvec2.hpp"
-
-using namespace std;
 
 struct ALIGN(8) fvec2
 {
@@ -28,6 +25,10 @@ struct ALIGN(8) fvec2
         {
 			flt32 r, g;
         };
+		struct
+		{
+			flt32 u, v;
+		};
 
 		FVEC2_SWIZZLE(fvec2);
     };

@@ -7,11 +7,10 @@
  */
 
 #pragma once
-#include "fvec2.hpp"
-#include "fvec3.hpp"
-#include "../../base.hpp"
 #include "../../empch.hpp"
 #include "../simd_helpers.hpp"
+#include "fvec2.hpp"
+#include "fvec3.hpp"
 #include "swizzle.hpp"
 
 struct ALIGN(16) fvec4
@@ -63,6 +62,12 @@ struct ALIGN(16) fvec4
 	 * \param arr Pointer to an array of at least 4 flt32 elements.
 	 */
     explicit fvec4(const flt32* arr);
+	/**
+	 * Array constructor.
+	 * 
+	 * \param arr Pointer to an array of at least 4 flt64 elements.
+	 */
+    explicit fvec4(const flt64* arr);
 
 	/**
 	 * Constructor with two vectors.
@@ -393,6 +398,14 @@ fvec4::fvec4(const flt32* arr)
 	this->_arr[1] = arr[1];
 	this->_arr[2] = arr[2];
 	this->_arr[3] = arr[3];
+}
+
+fvec4::fvec4(const flt64* arr)
+{
+	this->_arr[0] = static_cast<flt32>(arr[0]);
+	this->_arr[1] = static_cast<flt32>(arr[1]);
+	this->_arr[2] = static_cast<flt32>(arr[2]);
+	this->_arr[3] = static_cast<flt32>(arr[3]);
 }
 
 fvec4::fvec4(const fvec2& xy, const fvec2& zw) : x(xy.x), y(xy.y), z(zw.x), w(zw.y) {}

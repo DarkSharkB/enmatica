@@ -7,9 +7,8 @@
  */
 
 #pragma once
-#include "ivec2.hpp"
-#include "../../base.hpp"
 #include "../../empch.hpp"
+#include "ivec2.hpp"
 
 struct ALIGN(16) ivec3
 {
@@ -18,6 +17,10 @@ struct ALIGN(16) ivec3
         struct
         {
             int32 x, y, z;
+        };
+        struct
+        {
+            int32 r, g, b;
         };
         int32 arr[3];
     };
