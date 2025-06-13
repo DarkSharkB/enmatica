@@ -1,3 +1,5 @@
+Enmatica is a lightweight, header-only C++ math library designed for high-performance game development. It includes core math types (vectors, matrices, quaternions) with SIMD support, swizzling, and transform operations. Built without CMake for easy integration, it's actively used in my gameplay and engine projects.
+
 ## enma library has the following dependencies
  - googletest
 
