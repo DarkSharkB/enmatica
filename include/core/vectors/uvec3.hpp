@@ -7,13 +7,14 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 #include "uvec2.hpp"
 
 struct ALIGN(16) uvec3
 {
     union
     {
+        uin32 _arr[3];
         struct
         {
             uin32 x, y, z;
@@ -22,7 +23,8 @@ struct ALIGN(16) uvec3
 		{
 			uin32 r, g, b;
 		};
-        uin32 arr[3];
+
+		UVEC3_SWIZZLE(uvec3);
     };
 		
 public:

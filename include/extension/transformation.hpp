@@ -1,5 +1,5 @@
 #pragma once
-#include "../enma.hpp"
+#include "enma.hpp"
 
 /* All functions in Left-Handed Y Up Cartesian Coordinates. Deal with it! */
 

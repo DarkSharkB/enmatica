@@ -7,9 +7,9 @@
  */
 
 #pragma once
-#include "../../vector.hpp"
-#include "../../base.hpp"
-#include "../../empch.hpp"
+#include "empch.hpp"
+#include "base.hpp"
+#include "vector.hpp"
 
 struct fmat3x4
 {

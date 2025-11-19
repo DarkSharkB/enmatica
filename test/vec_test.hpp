@@ -1,6 +1,6 @@
 #include "enma.hpp"
+#include "log.hpp"
 #include "gtest/gtest.h"
-#include <cmath>
 
 #define EXPECT_VEC2_EQ(v1, v2)              \
 do                                          \

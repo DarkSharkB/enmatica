@@ -7,9 +7,9 @@
  */
 
 #pragma once
-#include "../../vector.hpp"
-#include "../../base.hpp"
-#include "../../empch.hpp"
+#include "empch.hpp"
+#include "base.hpp"
+#include "vector.hpp"
 
 struct ALIGN(32) fmat4x2
 {

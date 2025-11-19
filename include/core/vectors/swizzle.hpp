@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 
 #define CONCATENATE(a, b) a ## b
 #define CONCATENATE_3(a, b, c) a ## b ## c
@@ -675,8 +675,13 @@ struct swizzle4
     VEC4_SWIZZLE4(outType, 3, 3, 3, 3, primitiveType)
 
 #define FVEC2_SWIZZLE(outType) VEC2_SWIZZLE(outType, flt32)
-#define IVEC2_SWIZZLE(outType) VEC2_SWIZZLE(outType, uin32)
+#define IVEC2_SWIZZLE(outType) VEC2_SWIZZLE(outType, int32)
+#define UVEC2_SWIZZLE(outType) VEC2_SWIZZLE(outType, uin32)
 
 #define FVEC3_SWIZZLE(outType) VEC3_SWIZZLE(outType, flt32)
+#define IVEC3_SWIZZLE(outType) VEC3_SWIZZLE(outType, int32)
+#define UVEC3_SWIZZLE(outType) VEC3_SWIZZLE(outType, uin32)
 
 #define FVEC4_SWIZZLE(outType) VEC4_SWIZZLE(outType, flt32)
+#define IVEC4_SWIZZLE(outType) VEC4_SWIZZLE(outType, int32)
+#define UVEC4_SWIZZLE(outType) VEC4_SWIZZLE(outType, uin32)

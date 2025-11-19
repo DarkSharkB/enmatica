@@ -1,5 +1,5 @@
 #pragma once
-#include "../empch.hpp"
+#include "empch.hpp"
 
 #ifdef USE_SIMD
 inline __m128 set1(const flt32 val);

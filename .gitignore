@@ -1,7 +1,12 @@
 .vscode
+build/*
+!build/bin/
+!build/lib/
+!build/temp/
 build/bin/*
 build/lib/*
 build/temp/*
 external/gtest/*
 enma.bat
 TODO.md
+CMakeLists.txt

@@ -7,10 +7,13 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
-#include "../simd_helpers.hpp"
-#include "swizzle.hpp"
+#include "empch.hpp"
 #include "bvec2.hpp"
+#include "core/simd_helpers.hpp"
+#include "swizzle.hpp"
+
+#define DOT_XY_STO_XY 0x33
+#define DOT_XY_STO_MEM0 0x31
 
 struct ALIGN(8) fvec2
 {
@@ -49,13 +52,15 @@ struct ALIGN(8) fvec2
 	/**
 	 * Single value constructor.
 	 *
-	 * \param val Value to initialize x and y components. 
+	 * \param val Value to initialise the x and y components. 
 	 *			  Defaults to 0.0f if not provided.
 	 */
 	explicit fvec2(flt32 val = 0.0f);
 	/**
 	 * Array constructor.
-	 * 
+	 *
+	 * Copies the value from an array to the components of the vector.
+	 *
 	 * \param arr Pointer to an array of at least 2 flt32 elements.
 	 */
 	explicit fvec2(const flt32* arr);
@@ -553,7 +558,7 @@ fvec2& fvec2::operator-=(flt32 val)
 fvec2& fvec2::Normalise()
 {
 	const __m128 vl = set(*this);
-	const __m128 x = _mm_dp_ps(vl, vl, 0x77);
+	const __m128 x = _mm_dp_ps(vl, vl, DOT_XY_STO_XY);
 
 	const __m128 mag = _mm_sqrt_ps(x);		// The magnitude of the Vector
 
@@ -565,7 +570,7 @@ fvec2& fvec2::Normalise()
 fvec2 Normalise(const fvec2& v)
 {
 	__m128 vl = set(v);
-	const __m128 x = _mm_dp_ps(vl, vl, 0x77);
+	const __m128 x = _mm_dp_ps(vl, vl, DOT_XY_STO_XY);
 
 	const __m128 mag = _mm_sqrt_ps(x);	// The magnitude of the Vector
 
@@ -579,7 +584,7 @@ flt32 fvec2::Dot(const fvec2& other)
 	const __m128 v1 = set(*this);
 	const __m128 v2 = set(other);
 		
-	const __m128 dot = _mm_dp_ps(v1, v2, 0x77);
+	const __m128 dot = _mm_dp_ps(v1, v2, DOT_XY_STO_MEM0);
 
 	return dot[0];
 }
@@ -589,7 +594,7 @@ flt32 Dot(const fvec2& v1, const fvec2& v2)
 	const __m128 lv1 = set(v1);
 	const __m128 lv2 = set(v2);
 		
-	const __m128 dot = _mm_dp_ps(lv1, lv2, 0x77);
+	const __m128 dot = _mm_dp_ps(lv1, lv2, DOT_XY_STO_MEM0);
 
 	return dot[0];
 }
@@ -763,7 +768,7 @@ fvec2& fvec2::operator-=(flt32 val)
 }
 
 /**
- * @return Normalised form of the given vector
+ * \return Normalised form of the given vector
  */
 fvec2& fvec2::Normalise()
 {
@@ -777,8 +782,8 @@ fvec2& fvec2::Normalise()
 }
 
 /**
- * @param other The other vector with which the dot product is calculated
- * @return Returns the dot product between the given vector and the other vector
+ * \param other The other vector with which the dot product is calculated
+ * \return Returns the dot product between the given vector and the other vector
  */
 flt32 fvec2::Dot(const fvec2& other)
 {
@@ -786,10 +791,10 @@ flt32 fvec2::Dot(const fvec2& other)
 }
 
 /**
- * @brief Calculates the Euclidean distance between this vector and another vector.
+ * \brief Calculates the Euclidean distance between this vector and another vector.
  *
- * @param other The other vector to which the distance is calculated.
- * @return Distance between this vector and the other vector.
+ * \param other The other vector to which the distance is calculated.
+ * \return Distance between this vector and the other vector.
  */
 flt32 fvec2::Distance(const fvec2& other)
 {

@@ -7,11 +7,11 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
-#include "../vectors/fvec3.hpp"
-#include "../matrices/fmat4x4.hpp"
-#include "../../base.hpp"
-#include "../../trignometry.hpp"
+#include "empch.hpp"
+#include "base.hpp"
+#include "trignometry.hpp"
+#include "core/vectors/fvec3.hpp"
+#include "core/matrices/fmat4x4.hpp"
 
 struct ALIGN(16) fquat
 {
@@ -389,9 +389,9 @@ mat4x4 ToRotationMatrix(const fquat& q)
 
 fvec3 operator*(const vec3& v, const quat& q)
 {
-	quat vQuat = quat(0.0, v);
+	quat p = quat(0.0, v);
 	quat qConj = Conjugate(q);
-	quat result = q * vQuat * qConj;
+	quat result = q * p * qConj;
 
 	return vec3(result.x, result.y, result.z);
 }

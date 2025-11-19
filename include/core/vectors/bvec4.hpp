@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 #include "bvec2.hpp"
 #include "bvec3.hpp"
 

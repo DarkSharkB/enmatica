@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include "../vectors/fvec3.hpp"
-#include "../../empch.hpp"
+#include "empch.hpp"
+#include "core/vectors/fvec3.hpp"
 
 struct ALIGN(32) dquat
 {

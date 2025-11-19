@@ -7,9 +7,9 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
-#include "../simd_helpers.hpp"
+#include "empch.hpp"
 #include "fvec2.hpp"
+#include "core/simd_helpers.hpp"
 #include "swizzle.hpp"
 
 struct ALIGN(16) fvec3
@@ -910,6 +910,7 @@ fvec3& fvec3::Cross(const fvec3& other)
 
 	v1 = _mm_mul_ps(v1, i1);
 	v1 = _mm_shuffle_ps(v1, v1, 0x09);
+
 	v2 = _mm_mul_ps(i1, i2);
 
 	*this = _mm_sub_ps(v1, v2);

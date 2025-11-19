@@ -1,7 +1,7 @@
 #pragma once
-#include "../enma.hpp"
+#include "enma.hpp"
 
-/*          Avoids Windows fuckery      */
+/*          Prevents Windows fuckery      */
 #undef near
 #undef far
 /*                                     */

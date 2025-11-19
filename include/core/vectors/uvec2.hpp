@@ -7,12 +7,15 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
+#include "core/simd_helpers.hpp"
+#include "swizzle.hpp"
 
 struct ALIGN(8) uvec2
 {
 	union
 	{
+		uin32 _arr[2];
 		struct 
 		{
 			uin32 x, y;
@@ -21,7 +24,8 @@ struct ALIGN(8) uvec2
 		{
 			uin32 r, g;
 		};
-		uin32 arr[2];
+
+		UVEC2_SWIZZLE(uvec2);
 	};
 
 	uvec2(const uvec2& v);
