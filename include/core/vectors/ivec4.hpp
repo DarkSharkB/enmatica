@@ -7,14 +7,17 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 #include "ivec2.hpp"
 #include "ivec3.hpp"
+#include "core/simd_helpers.hpp"
+#include "swizzle.hpp"
 
 struct ALIGN(16) ivec4
 {
     union 
     {
+        int32 _arr[4];
         struct
         {
             int32 x, y, z, w;
@@ -23,7 +26,9 @@ struct ALIGN(16) ivec4
         {
             int32 r, g, b, a;
         };
-        int32 arr[4];
+
+		IVEC4_SWIZZLE(ivec4);
+
 		#ifdef USE_SIMD
         __m128i vals;
 		#endif
@@ -83,10 +88,10 @@ ivec4::ivec4(const int32 ix, const int32 iy, const int32 iz, const int32 iw) : x
 
 ivec4::ivec4(const int32* arr)
 {
-	this->arr[0] = arr[0];
-	this->arr[1] = arr[1];
-	this->arr[2] = arr[2];
-	this->arr[3] = arr[3];
+	this->_arr[0] = arr[0];
+	this->_arr[1] = arr[1];
+	this->_arr[2] = arr[2];
+	this->_arr[3] = arr[3];
 }
 
 ivec4::ivec4(const ivec2& v1, const ivec2& v2)
@@ -127,7 +132,7 @@ ivec4 ivec4::operator+(const ivec4& other) const
 	return ivec4(this->x + other.x, this->y + other.y, this->z + other.z, this->w + other.w);
 }
 
-ivec4& ivec4::operator+=(const ivec4 &other)
+ivec4& ivec4::operator+=(const ivec4& other)
 {
 	this->x += other.x;
 	this->y += other.y;
@@ -192,7 +197,7 @@ ivec4 ivec4::operator/(const ivec4& other) const
 	return ivec4(this->x / other.x, this->y / other.y, this->z / other.z, this->w / other.w);
 }
 
-ivec4& ivec4::operator/=(const ivec4 &other)
+ivec4& ivec4::operator/=(const ivec4& other)
 {
 	this->x /= other.x;
 	this->y /= other.y;

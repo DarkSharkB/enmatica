@@ -1,8 +1,8 @@
-#include "log.hpp"
 #pragma clang diagnostic ignored "-Wmicrosoft-include"
 
 #define ENMA_IMPLEMENTATION
 #include "enma.hpp"
+#include "log.hpp"
 #include "vec_test.hpp"
 
 int32 main(int32 argc, char** argv)
@@ -12,9 +12,9 @@ int32 main(int32 argc, char** argv)
 
     vec4 v = vec4(0, 0, 4, 1);
 
-    mat4 mx = RotationMatrixX(90);
-    mat4 my = RotationMatrixY(90);
-    mat4 mz = RotationMatrixZ(90);
+    mat4 mx = RotateX(90);
+    mat4 my = RotateY(90);
+    mat4 mz = RotateZ(90);
 
     mat4 m = mx * my * mz;
 

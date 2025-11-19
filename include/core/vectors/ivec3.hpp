@@ -7,13 +7,16 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 #include "ivec2.hpp"
+#include "core/simd_helpers.hpp"
+#include "swizzle.hpp"
 
 struct ALIGN(16) ivec3
 {
     union
     {
+        int32 _arr[3];
         struct
         {
             int32 x, y, z;
@@ -22,11 +25,12 @@ struct ALIGN(16) ivec3
         {
             int32 r, g, b;
         };
-        int32 arr[3];
+		
+		IVEC3_SWIZZLE(ivec3);
     };
     
 public:
-    ivec3(const ivec3 &v);
+    ivec3(const ivec3& v);
     ivec3(const int32 val = 0);
     ivec3(const int32 ix, const int32 iy, const int32 iz);
     ivec3(const int32 x, const ivec2& yz);

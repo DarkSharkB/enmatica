@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
+#include "empch.hpp"
 
 struct bvec2
 {

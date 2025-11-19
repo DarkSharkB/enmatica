@@ -7,10 +7,10 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
-#include "../simd_helpers.hpp"
+#include "empch.hpp"
 #include "fvec2.hpp"
 #include "fvec3.hpp"
+#include "core/simd_helpers.hpp"
 #include "swizzle.hpp"
 
 struct ALIGN(16) fvec4

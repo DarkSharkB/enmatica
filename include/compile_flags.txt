@@ -9,3 +9,4 @@
 -c
 -O2
 -g
+-I../include

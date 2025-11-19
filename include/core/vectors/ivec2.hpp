@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include "../../empch.hpp"
-#include "../simd_helpers.hpp"
+#include "empch.hpp"
+#include "core/simd_helpers.hpp"
 #include "swizzle.hpp"
 
 struct ALIGN(8) ivec2

@@ -5,7 +5,7 @@ Enmatica is a lightweight, header-only C++ math library designed for high-perfor
 
 ## To Build a Library:
     
-    clang++ -DDEBUG -mavx2 -mfma -c -g -O2 ../../include/*.cpp
+    clang++ -DDEBUG -mavx2 -mfma -c -g -O2 -I../../include/ ../../include/*.cpp
 
     llvm-ar -rc lib/enma.lib build/temp/*.o
 
