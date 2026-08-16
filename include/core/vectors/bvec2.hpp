@@ -1,74 +1,105 @@
-/* 2 Component Boolean Vector
+/**
+ * \brief 2 Component Boolean Vector
  * 
  * This header file is part of Enmatica library
  *
- * Copyright (c) 202X by Villainous Softworks
+ * \copyright Copyright (c) 202X by Villainous Softworks
  * 
  */
-
 #pragma once
-#include "empch.hpp"
+
+#ifndef ENMA_BVEC2_HPP
+#define ENMA_BVEC2_HPP
+
+#include <iostream>
+#include "base.hpp"
+#include "types.hpp"
+
+ENMA_NS_START
+//================= Declaration Starts =================//
 
 struct bvec2
 {
-    union 
+  union 
+  {
+    bln8 _arr[2];
+    struct
     {
-        struct
-        {
-            bln8 x, y;
-        };
-        bln8 arr[2];
+      bln8 x, y;
     };
+  };
 
-	bvec2(const bvec2& vec);
-	bvec2(const bln8 val = false);
-    bvec2(const bln8 bx, const bln8 by);
-	bvec2(const bln8* arr);
+  constexpr explicit bvec2(bln8 val = false);
+  constexpr explicit bvec2(bln8 x, bln8 y);
 
-    bln8 operator==(const bvec2& other);
-    bln8 operator!=(const bvec2& other);
+  /*
+  constexpr bvec2(const bvec2& v);
+  bvec2& operator=(const bvec2& other);
+  */
 
-    bvec2 Equals(const bvec2& other);
-	
-	#ifdef DEBUG
-    friend std::ostream& operator<<(std::ostream& os, const bvec2& vec)
-    {
-        os << "( X: " << vec.x << "\tY: " << vec.y << " )";
+  bln8 operator==(const bvec2& other);
+  bln8 operator!=(const bvec2& other);
 
-        return os;
-    }
-	#endif
+  bvec2 Equals(const bvec2& other);
+  
+  #ifdef DEBUG
+  friend std::ostream& operator<<(std::ostream& os, const bvec2& v);
+  #endif // DEBUG
 };
 
-#ifdef ENMA_IMPLEMENTATION
-bvec2::bvec2(const bvec2& v)
+//================== Declaration Ends ==================//
+ENMA_NS_END
+
+
+ENMA_NS_START
+//=============== Implementation Starts ===============//
+
+inline constexpr bvec2::bvec2(bln8 val)
+: x(val), y(val) {}
+
+inline constexpr bvec2::bvec2(bln8 x, bln8 y)
+: x(x), y(y) {}
+
+/*
+inline constexpr bvec2::bvec2(const bvec2& v)
+: x(v.x), y(v.y) {}
+
+inline bvec2& bvec2::operator=(const bvec2& other)
 {
-    this->x = v.x;
-    this->y = v.y;
+  if(this != &other)
+  {
+    this->x = other.x;
+    this->y = other.y;
+  }
+  return *this;
+}
+*/
+
+inline bln8 bvec2::operator==(const bvec2& other)
+{
+  return this->x == other.x & this->y == other.y;
 }
 
-bvec2::bvec2(const bln8 val) : x(val), y(val) {}
-
-bvec2::bvec2(const bln8 bx, const bln8 by) : x(bx), y(by) {}
-
-bvec2::bvec2(const bln8* arr)
+inline bln8 bvec2::operator!=(const bvec2& other)
 {
-	this->arr[0] = arr[0];
-	this->arr[1] = arr[1];
+  return this->x != other.x & this->y != other.y;
 }
 
-bln8 bvec2::operator==(const bvec2& other)
+inline bvec2 bvec2::Equals(const bvec2& other)
 {
-    return this->x == other.x & this->y == other.y;
+  return bvec2(this->x == other.x, this->y == other.y);
 }
 
-bln8 bvec2::operator!=(const bvec2& other)
+#ifdef DEBUG
+inline std::ostream& operator<<(std::ostream& os, const bvec2& v)
 {
-    return this->x != other.x & this->y != other.y;
-}
+  os << "( X: " << v.x << "\tY: " << v.y << " )";
 
-bvec2 bvec2::Equals(const bvec2& other)
-{
-    return bvec2(this->x == other.x, this->y == other.y);
+  return os;
 }
-#endif
+#endif // DEBUG
+
+//================ Implementation Ends ================//
+ENMA_NS_END
+
+#endif // ENMA_BVEC2_HPP

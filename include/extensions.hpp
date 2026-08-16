@@ -1,9 +1,17 @@
+/** Extensions Collection
+ * 
+ * This header file is an extension to
+ * the Enmatica library
+ *
+ * Copyright (c) 202X Villainous Softworks
+ * 
+ */
 #pragma once
-#include "enma.hpp"
 
-#ifndef USE_LH_YU
-#define USE_LH_YU
-#endif
+#ifndef ENMA_EXTENSIONS_HPP
+#define ENMA_EXTENSIONS_HPP
 
-#include "extension/transformation.hpp"
-#include "extension/projection.hpp"
+#include "extensions/transformation.hpp" // IWYU pragma: export
+#include "extensions/projection.hpp"     // IWYU pragma: export
+
+#endif // ENMA_EXTENSIONS_HPP
