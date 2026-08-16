@@ -1,6 +1,8 @@
 -DDEBUG
+-DCONSOLE_LOG
+-std=c++17
 -mavx2
 -mfma
 -O2
--I../include
--I../external
+-I../include/
+-I../external/googletest/include/
