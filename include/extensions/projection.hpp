@@ -1,7 +1,7 @@
 /** Projection Extension
  * 
- * This header file is an extension to
- * the Enmatica library
+ * This header file serves as
+ * an extension to the Enmatica library
  *
  * Copyright (c) 202X Villainous Softworks
  * 
@@ -45,13 +45,13 @@ inline sfmat4 Perspective(flt32 fovy, flt32 aspectRatio, flt32 near, flt32 far);
 /**
 * \brief 
 * 
-* \param width 
-* \param height 
+* \param scale 
+* \param aspectRatio 
 * \param near 
 * \param far 
 * \return sfmat4 
 */
-inline sfmat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far);
+inline sfmat4 Orthographic(flt32 scale, flt32 aspectRatio, flt32 near, flt32 far);
 
 /**
 * \brief 
@@ -83,10 +83,10 @@ inline sfmat4 LookAt(const sfvec3& eye, const sfvec3& target, const sfvec3& up)
 
   return sfmat4
   {
-    xAxis.x, yAxis.x, zAxis.x, 0.0f,
-    xAxis.y, yAxis.y, zAxis.y, 0.0f,
-    xAxis.z, yAxis.z, zAxis.z, 0.0f,
-    -Dot(xAxis, eye), -Dot(yAxis, eye), -Dot(zAxis, eye), 1.0f
+    xAxis.x,                  yAxis.x,                 zAxis.x,                 0.0f,
+    xAxis.y,                  yAxis.y,                 zAxis.y,                 0.0f,
+    xAxis.z,                  yAxis.z,                 zAxis.z,                 0.0f,
+    -Dot(xAxis, eye),  -Dot(yAxis, eye), -Dot(zAxis, eye), 1.0f
   };
 }
 
@@ -105,37 +105,35 @@ inline sfmat4 Perspective(flt32 fovy, flt32 aspectRatio, flt32 near, flt32 far)
 
   return sfmat4
   {
-    focal,  0.0f,                 0.0f,                 0.0f,
-    0.0f,   -focal * aspectRatio, 0.0f,                 0.0f,
-    0.0f,   0.0f,                 -nearRecpAhead,       1.0f,
-    0.0f,   0.0f,                 far * nearRecpAhead,  0.0f
+    focal / aspectRatio,  0.0f,   0.0f,                 0.0f,
+    0.0f,                 -focal, 0.0f,                 0.0f,
+    0.0f,                 0.0f,   -nearRecpAhead,       1.0f,
+    0.0f,                 0.0f,   far * nearRecpAhead,  0.0f
   };
   #else // !USE_REV_DEPTH
   const flt32 farRecpAhead = far / (far - near);
 
   return sfmat4
   {
-    focal,  0.0f,                 0.0f,                 0.0f,
-    0.0f,   -focal * aspectRatio, 0.0f,                 0.0f,
-    0.0f,   0.0f,                 farRecpAhead,         1.0f,
-    0.0f,   0.0f,                 -near * farRecpAhead, 0.0f
+    focal / aspectRatio,  0.0f,   0.0f,                 0.0f,
+    0.0f,                 -focal, 0.0f,                 0.0f,
+    0.0f,                 0.0f,   farRecpAhead,         1.0f,
+    0.0f,                 0.0f,   -near * farRecpAhead, 0.0f
   };
   #endif // USE_REV_DEPTH && !USE_REV_DEPTH
 }
 
-inline sfmat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far)
+inline sfmat4 Orthographic(flt32 scale, flt32 aspectRatio, flt32 near, flt32 far)
 {
-  const flt32 aspectRatio = width / height;
-  
   #ifdef USE_REV_DEPTH
   const flt32 recpBehind = 1.0f / (near - far);
 
   return sfmat4
   {    
-    1.0f,   0.0f,                 0.0f,               0.0f,
-    0.0f,   -1.0f * aspectRatio,  0.0f,               0.0f,
-    0.0f,   0.0f,                 recpBehind,         0.0f, 
-    0.0f,   0.0f,                 -far * recpBehind,  1.0f
+    scale / aspectRatio,  0.0f,   0.0f,               0.0f,
+    0.0f,                 -scale, 0.0f,               0.0f,
+    0.0f,                 0.0f,   scale * recpBehind, 0.0f, 
+    0.0f,                 0.0f,   -far * recpBehind,  1.0f
   };
 
   #else // !USE_REV_DEPTH
@@ -143,10 +141,10 @@ inline sfmat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far)
 
   return sfmat4
   {    
-    1.0f,   0.0f,                 0.0f,               0.0f,
-    0.0f,   -1.0f * aspectRatio,  0.0f,               0.0f,
-    0.0f,   0.0f,                 recpAhead,          0.0f, 
-    0.0f,   0.0f,                 -near * recpAhead,  1.0f
+    scale / aspectRatio,  0.0f,   0.0f,               0.0f,
+    0.0f,                 -scale, 0.0f,               0.0f,
+    0.0f,                 0.0f,   scale * recpAhead,  0.0f, 
+    0.0f,                 0.0f,   -near * recpAhead,  1.0f
   };
   #endif // USE_REV_DEPTH && !USE_REV_DEPTH
 }
@@ -154,7 +152,7 @@ inline sfmat4 Orthographic(flt32 width, flt32 height, flt32 near, flt32 far)
 inline sfmat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt32 near, flt32 far) 
 {
   const flt32 recpHorizontal = 1.0f / (right - left);
-  const flt32 recpVertical = 1.0f / (top - bottom);
+  const flt32 recpVertical   = 1.0f / (top - bottom);
 
   #ifdef USE_REV_DEPTH
   const flt32 recpBehind = 1.0f / (near - far);
@@ -162,11 +160,8 @@ inline sfmat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt
   return sfmat4
   {
     2.0f * recpHorizontal,            0.0f,                           0.0f,               0.0f,
-
     0.0f,                             -2.0f * recpVertical,           0.0f,               0.0f,
-
     0.0f,                             0.0f,                           recpBehind,         0.0f,
-
     -(right + left) * recpHorizontal, -(top + bottom) * recpVertical, -far * recpBehind,  1.0f
   };
 
@@ -176,11 +171,8 @@ inline sfmat4 Orthographic(flt32 left, flt32 right, flt32 bottom, flt32 top, flt
   return sfmat4
   {
     2.0f * recpHorizontal,            0.0f,                           0.0f,               0.0f,
-
     0.0f,                             -2.0f * recpVertical,           0.0f,               0.0f,
-
     0.0f,                             0.0f,                           recpAhead,          0.0f,
-
     -(right + left) * recpHorizontal, -(top + bottom) * recpVertical, -near * recpAhead,  1.0f
   };
   #endif // USE_REV_DEPTH && !USE_REV_DEPTH
