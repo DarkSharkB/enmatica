@@ -191,6 +191,16 @@ struct ALIGN(16) sfvec4
   * \return Resultant sfvec4 after multiplication.
   */
   sfvec4 operator*(const sfvec4& other) const;
+
+  /**
+  * Multiplication operator (matrix).
+  * 
+  * Performs multiplication between this vector and a matrix.
+  *
+  * \param other The sfmat4 to be multiplied.
+  * \return Resultant sfvec4 after multiplication.
+  */
+  sfvec4 operator*(const sfmat4& other) const;
   
   /**
   * Multiplication assignment operator (element-wise).

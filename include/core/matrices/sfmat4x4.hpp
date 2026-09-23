@@ -532,6 +532,19 @@ inline std::ostream& operator<<(std::ostream& os, const sfmat4x4& m)
 inline constexpr sfmat4x4 sfmat4x4::zero     = sfmat4x4();
 inline constexpr sfmat4x4 sfmat4x4::identity = sfmat4x4::Identity();
 
+inline sfvec4 sfvec4::operator*(const sfmat4& other) const
+{
+  sfvec4 v = this->_vals;
+  sfmat4x4 m = Transpose(other);
+
+  flt32 x = _mm_dp_ps(v, m._vals[0], 0xFF)[0];
+  flt32 y = _mm_dp_ps(v, m._vals[1], 0xFF)[0];
+  flt32 z = _mm_dp_ps(v, m._vals[2], 0xFF)[0];
+  flt32 w = _mm_dp_ps(v, m._vals[3], 0xFF)[0];
+
+  return sfvec4(x, y, z, w);
+}
+
 //================ Implementation Ends ================//
 ENMA_NS_END
 
