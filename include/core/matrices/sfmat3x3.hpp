@@ -10,7 +10,6 @@
 #ifndef ENMA_SFMAT3X3_HPP
 #define ENMA_SFMAT3X3_HPP
 
-#include <intrin.h>
 #include <iostream>
 #include <iomanip>
 #include "base.hpp"
@@ -166,7 +165,6 @@ inline sfmat3x3::sfmat3x3(const __m256& f8vals, flt32 val)
   this->_arr[7] = f8vals[7];
   this->_arr[8] = val;
 }
-#endif // USE_SIMD
 
 inline sfmat3x3 sfmat3x3::operator+(const sfmat3x3& m) const
 {
@@ -212,42 +210,6 @@ inline sfmat3x3& sfmat3x3::operator-=(const sfmat3x3& m)
   t1 = _mm256_sub_ps(t1, t2);
 
   _mm256_store_ps(this->_arr, t1);
-
-  return *this;
-}
-
-inline sfmat3x3 sfmat3x3::operator*(const sfmat3x3& other) const
-{
-  flt32 m1 = m00 * other.m00 + m01 * other.m10 + m02 * other.m20;
-  flt32 m2 = m00 * other.m01 + m01 * other.m11 + m02 * other.m21;
-  flt32 m3 = m00 * other.m02 + m01 * other.m12 + m02 * other.m22;
-
-  flt32 m4 = m10 * other.m00 + m11 * other.m10 + m12 * other.m20;
-  flt32 m5 = m10 * other.m01 + m11 * other.m11 + m12 * other.m21;
-  flt32 m6 = m10 * other.m02 + m11 * other.m12 + m12 * other.m22;
-
-  flt32 m7 = m20 * other.m00 + m21 * other.m10 + m22 * other.m20;
-  flt32 m8 = m20 * other.m01 + m21 * other.m11 + m22 * other.m21;
-  flt32 m9 = m20 * other.m02 + m21 * other.m12 + m22 * other.m22;
-
-  return sfmat3x3(m1, m2, m3, m4, m5, m6, m7, m8, m9);
-}
-
-inline sfmat3x3& sfmat3x3::operator*=(const sfmat3x3& other)
-{
-  flt32 m1 = m00 * other.m00 + m01 * other.m10 + m02 * other.m20;
-  flt32 m2 = m00 * other.m01 + m01 * other.m11 + m02 * other.m21;
-  flt32 m3 = m00 * other.m02 + m01 * other.m12 + m02 * other.m22;
-
-  flt32 m4 = m10 * other.m00 + m11 * other.m10 + m12 * other.m20;
-  flt32 m5 = m10 * other.m01 + m11 * other.m11 + m12 * other.m21;
-  flt32 m6 = m10 * other.m02 + m11 * other.m12 + m12 * other.m22;
-
-  flt32 m7 = m20 * other.m00 + m21 * other.m10 + m22 * other.m20;
-  flt32 m8 = m20 * other.m01 + m21 * other.m11 + m22 * other.m21;
-  flt32 m9 = m20 * other.m02 + m21 * other.m12 + m22 * other.m22;
-
-  *this = sfmat3x3(m1, m2, m3, m4, m5, m6, m7, m8, m9);
 
   return *this;
 }
@@ -304,14 +266,208 @@ inline sfmat3x3& sfmat3x3::operator/=(flt32 val)
 
   return *this;
 }
+#else // !USE_SIMD
+
+inline sfmat3x3 sfmat3x3::operator+(const sfmat3x3& m) const
+{
+  flt32 m00 = this->m00 + m.m00;
+  flt32 m01 = this->m01 + m.m01;
+  flt32 m02 = this->m02 + m.m02;
+  flt32 m10 = this->m10 + m.m10;
+  flt32 m11 = this->m11 + m.m11;
+  flt32 m12 = this->m12 + m.m12;
+  flt32 m20 = this->m20 + m.m20;
+  flt32 m21 = this->m21 + m.m21;
+  flt32 m22 = this->m22 + m.m22;
+  
+  return sfmat3x3
+  {
+    m00, m01, m02,
+    m10, m11, m12,
+    m20, m21, m22
+  };
+}
+
+inline sfmat3x3& sfmat3x3::operator+=(const sfmat3x3& m)
+{
+  this->m00 += m.m00;
+  this->m01 += m.m01;
+  this->m02 += m.m02;
+  this->m10 += m.m10;
+  this->m11 += m.m11;
+  this->m12 += m.m12;
+  this->m20 += m.m20;
+  this->m21 += m.m21;
+  this->m22 += m.m22;
+
+  return *this;
+}
+
+inline sfmat3x3 sfmat3x3::operator-(const sfmat3x3& m) const
+{
+  flt32 m00 = this->m00 - m.m00;
+  flt32 m01 = this->m01 - m.m01;
+  flt32 m02 = this->m02 - m.m02;
+  flt32 m10 = this->m10 - m.m10;
+  flt32 m11 = this->m11 - m.m11;
+  flt32 m12 = this->m12 - m.m12;
+  flt32 m20 = this->m20 - m.m20;
+  flt32 m21 = this->m21 - m.m21;
+  flt32 m22 = this->m22 - m.m22;
+  
+  return sfmat3x3
+  {
+    m00, m01, m02,
+    m10, m11, m12,
+    m20, m21, m22
+  };
+}
+
+inline sfmat3x3& sfmat3x3::operator-=(const sfmat3x3& m)
+{
+  this->m00 -= m.m00;
+  this->m01 -= m.m01;
+  this->m02 -= m.m02;
+  this->m10 -= m.m10;
+  this->m11 -= m.m11;
+  this->m12 -= m.m12;
+  this->m20 -= m.m20;
+  this->m21 -= m.m21;
+  this->m22 -= m.m22;
+
+  return *this;
+}
+
+inline sfmat3x3 sfmat3x3::operator*(flt32 val) const
+{
+  flt32 m00 = this->m00 * val;
+  flt32 m01 = this->m01 * val;
+  flt32 m02 = this->m02 * val;
+  flt32 m10 = this->m10 * val;
+  flt32 m11 = this->m11 * val;
+  flt32 m12 = this->m12 * val;
+  flt32 m20 = this->m20 * val;
+  flt32 m21 = this->m21 * val;
+  flt32 m22 = this->m22 * val;
+  
+  return sfmat3x3
+  {
+    m00, m01, m02,
+    m10, m11, m12,
+    m20, m21, m22
+  };
+}
+
+inline sfmat3x3& sfmat3x3::operator*=(flt32 val)
+{
+  this->m00 *= val;
+  this->m01 *= val;
+  this->m02 *= val;
+  this->m10 *= val;
+  this->m11 *= val;
+  this->m12 *= val;
+  this->m20 *= val;
+  this->m21 *= val;
+  this->m22 *= val;
+
+  return *this;
+}
+
+inline sfmat3x3 sfmat3x3::operator/(flt32 val) const
+{
+  const flt32 rec = 1.0f / val;
+
+  flt32 m00 = this->m00 * rec;
+  flt32 m01 = this->m01 * rec;
+  flt32 m02 = this->m02 * rec;
+  flt32 m10 = this->m10 * rec;
+  flt32 m11 = this->m11 * rec;
+  flt32 m12 = this->m12 * rec;
+  flt32 m20 = this->m20 * rec;
+  flt32 m21 = this->m21 * rec;
+  flt32 m22 = this->m22 * rec;
+  
+  return sfmat3x3
+  {
+    m00, m01, m02,
+    m10, m11, m12,
+    m20, m21, m22
+  };
+}
+
+inline sfmat3x3& sfmat3x3::operator/=(flt32 val)
+{
+  const flt32 rec = 1.0f / val;
+
+  this->m00 *= rec;
+  this->m01 *= rec;
+  this->m02 *= rec;
+  this->m10 *= rec;
+  this->m11 *= rec;
+  this->m12 *= rec;
+  this->m20 *= rec;
+  this->m21 *= rec;
+  this->m22 *= rec;
+
+  return *this;
+}
+#endif
+
+inline sfmat3x3 sfmat3x3::operator*(const sfmat3x3& other) const
+{
+  flt32 m00 = this->m00 * other.m00 + this->m01 * other.m10 + this->m02 * other.m20;
+  flt32 m01 = this->m00 * other.m01 + this->m01 * other.m11 + this->m02 * other.m21;
+  flt32 m02 = this->m00 * other.m02 + this->m01 * other.m12 + this->m02 * other.m22;
+
+  flt32 m10 = this->m10 * other.m00 + this->m11 * other.m10 + this->m12 * other.m20;
+  flt32 m11 = this->m10 * other.m01 + this->m11 * other.m11 + this->m12 * other.m21;
+  flt32 m12 = this->m10 * other.m02 + this->m11 * other.m12 + this->m12 * other.m22;
+
+  flt32 m20 = this->m20 * other.m00 + this->m21 * other.m10 + this->m22 * other.m20;
+  flt32 m21 = this->m20 * other.m01 + this->m21 * other.m11 + this->m22 * other.m21;
+  flt32 m22 = this->m20 * other.m02 + this->m21 * other.m12 + this->m22 * other.m22;
+
+  return sfmat3x3
+  {
+    m00, m01, m02,
+    m10, m11, m12,
+    m20, m21, m22
+  };
+}
+
+inline sfmat3x3& sfmat3x3::operator*=(const sfmat3x3& other)
+{
+  flt32 m00 = this->m00 * other.m00 + this->m01 * other.m10 + this->m02 * other.m20;
+  flt32 m01 = this->m00 * other.m01 + this->m01 * other.m11 + this->m02 * other.m21;
+  flt32 m02 = this->m00 * other.m02 + this->m01 * other.m12 + this->m02 * other.m22;
+
+  flt32 m10 = this->m10 * other.m00 + this->m11 * other.m10 + this->m12 * other.m20;
+  flt32 m11 = this->m10 * other.m01 + this->m11 * other.m11 + this->m12 * other.m21;
+  flt32 m12 = this->m10 * other.m02 + this->m11 * other.m12 + this->m12 * other.m22;
+
+  flt32 m20 = this->m20 * other.m00 + this->m21 * other.m10 + this->m22 * other.m20;
+  flt32 m21 = this->m20 * other.m01 + this->m21 * other.m11 + this->m22 * other.m21;
+  flt32 m22 = this->m20 * other.m02 + this->m21 * other.m12 + this->m22 * other.m22;
+
+  *this
+    = sfmat3x3
+      {
+        m00, m01, m02,
+        m10, m11, m12,
+        m20, m21, m22
+      };
+
+  return *this;
+}
 
 inline sfmat3x3 Transpose(const sfmat3x3& m)
 {
-  flt32 m01 = m.m10;
-  flt32 m02 = m.m20;
-  flt32 m12 = m.m21;
-
-  return sfmat3x3(m.m00, m01, m02, m.m01, m.m11, m12, m.m02, m.m12, m.m22);
+  return sfmat3x3
+  {
+    m.m00, m.m10, m.m20,
+    m.m01, m.m11, m.m21,
+    m.m02, m.m12, m.m22
+  };
 }
 
 inline flt32 Determinant(const sfmat3x3& m)

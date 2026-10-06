@@ -118,8 +118,18 @@ inline sfmat2x3::sfmat2x3
   this->_arr[4] = r1[1];
   this->_arr[5] = r1[2];
 }
-#endif
 
+inline flt32 sfmat2x3::Determinant()
+{
+  __m128 m = _mm_load_ps(this->_arr);
+  __m128 n = _mm_shuffle_ps(m, m, 0xBB);
+
+  m = _mm_mul_ps(m, n);
+
+  return m[0] - m[1];
+}
+
+#else // USE_SIMD
 inline sfmat2x3 sfmat2x3::operator+(const sfmat2x3& other) const
 {
   sfvec3 r11 = this->rows[0];
@@ -133,10 +143,8 @@ inline sfmat2x3 sfmat2x3::operator+(const sfmat2x3& other) const
 
 inline sfmat2x3 sfmat2x3::operator+=(const sfmat2x3& other)
 {
-  __m128 m1 = _mm_loadu_ps(this->_arr);
-  __m128 m2 = _mm_loadu_ps(other._arr);
-
-  _mm_store_ps(this->_arr, _mm_add_ps(m1, m2));
+  this->rows[0] = this->rows[0] + other.rows[0];
+  this->rows[1] = this->rows[1] + other.rows[1];
 
   return *this;
 }
@@ -154,23 +162,44 @@ inline sfmat2x3 sfmat2x3::operator-(const sfmat2x3& other) const
 
 inline sfmat2x3 sfmat2x3::operator-=(const sfmat2x3& other)
 {
-  __m128 m1 = _mm_loadu_ps(this->_arr);
-  __m128 m2 = _mm_loadu_ps(other._arr);
-
-  _mm_store_ps(this->_arr, _mm_sub_ps(m1, m2));
+  this->rows[0] = this->rows[0] - other.rows[0];
+  this->rows[1] = this->rows[1] - other.rows[1];
 
   return *this;
 }
 
-inline flt32 sfmat2x3::Determinant()
+inline sfmat2x3 sfmat2x3::operator*(flt32 val) const
 {
-  __m128 m = _mm_load_ps(this->_arr);
-  __m128 n = _mm_shuffle_ps(m, m, 0xBB);
+  sfvec3 r0 = this->rows[0] * val;
+  sfvec3 r1 = this->rows[1] * val;
 
-  m = _mm_mul_ps(m, n);
-
-  return m[0] - m[1];
+  return sfmat2x3(r0, r1);
 }
+
+inline sfmat2x3 sfmat2x3::operator*=(flt32 val)
+{
+  this->rows[0] = this->rows[0] * val;
+  this->rows[1] = this->rows[1] * val;
+
+  return *this;
+}
+
+inline sfmat2x3 sfmat2x3::operator/(flt32 val) const
+{
+  sfvec3 r0 = this->rows[0] / val;
+  sfvec3 r1 = this->rows[1] / val;
+
+  return sfmat2x3(r0, r1);
+}
+
+inline sfmat2x3 sfmat2x3::operator/=(flt32 val)
+{
+  this->rows[0] = this->rows[0] / val;
+  this->rows[1] = this->rows[1] / val;
+
+  return *this;
+}
+#endif // !USE_SIMD
 
 /*
 sfmat2x3 operator*(const sfmat2x3& other)

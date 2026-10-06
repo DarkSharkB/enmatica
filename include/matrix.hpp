@@ -10,7 +10,7 @@
 #ifndef ENMA_MATRIX_HPP
 #define ENMA_MATRIX_HPP
 
-/* 										Single-Precision Floating-Point Matices 												*/
+/* 										Single-Precision Floating-Point Matrices 												*/
 #include "core/matrices/sfmat2x2.hpp" // IWYU pragma: export
 #include "core/matrices/sfmat2x3.hpp" // IWYU pragma: export
 #include "core/matrices/sfmat2x4.hpp" // IWYU pragma: export

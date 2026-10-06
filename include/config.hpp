@@ -32,7 +32,6 @@
 
 #define USE_SIMD
 #define USE_SIMD_ALIGNED
-#define USE_SIMD_UNALIGNED
 #define USE_DEG
 #define USE_LH_YU
 

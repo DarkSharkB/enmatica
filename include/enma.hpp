@@ -4,7 +4,7 @@
  *         Computation & Graphical Applications
  *
  * \note      The header file of the Enmatica library
- * \version   0.85.5
+ * \version   0.85.6
  * 
  * \copyright Copyright (c) 202X Villainous Softworks
  * 

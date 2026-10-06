@@ -148,16 +148,6 @@ inline sfmat4x4 sfmat4x4::operator-() const
   );
 }
 
-#ifndef USE_SIMD
-inline sfmat4x4::sfmat4x4(const sfvec4& row0, const sfvec4& row1, const sfvec4& row2, const sfvec4& row3)
-{
-  memcpy(this->_arr, row0._arr, 4 * sizeof(flt32));
-  memcpy(this->_arr+4  * sizeof(flt32), row1._arr, 4 * sizeof(flt32));
-  memcpy(this->_arr+8  * sizeof(flt32), row2._arr, 4 * sizeof(flt32));
-  memcpy(this->_arr+12 * sizeof(flt32), row3._arr, 4 * sizeof(flt32));
-}
-
-#else // USE_SIMD
 inline constexpr sfmat4x4::sfmat4x4
 (
   const sfvec4& row0,
@@ -170,6 +160,7 @@ inline constexpr sfmat4x4::sfmat4x4
   m20(row2.x), m21(row2.y), m22(row2.z), m23(row2.w),
   m30(row3.x), m31(row3.y), m32(row3.z), m33(row3.w) {}
 
+#ifdef USE_SIMD
 inline sfmat4x4::sfmat4x4
 (
   const __m128& r1,
@@ -202,7 +193,6 @@ inline sfmat4x4 sfmat4x4::operator+(const sfmat4x4& other) const
 
   __m256 r21 = other._vals2[0];
   __m256 r22 = other._vals2[1];
-
 
   r11 = _mm256_add_ps(r11, r21);
   r12 = _mm256_add_ps(r12, r22);
@@ -373,10 +363,10 @@ inline sfvec4 sfmat4x4::operator*(const sfvec4& other) const
 
 inline sfmat4x4& sfmat4x4::operator*=(const sfmat4x4& other)
 {
-  /*flt32 	a[4] = { 0, 0, 0, 0 }, 
-      b[4] = { 0, 0, 0, 0 }, 
-      c[4] = { 0, 0, 0, 0 }, 
-      d[4] = { 0, 0, 0, 0 }; */
+  /*flt32 a[4] = { 0, 0, 0, 0 }, 
+          b[4] = { 0, 0, 0, 0 }, 
+          c[4] = { 0, 0, 0, 0 }, 
+          d[4] = { 0, 0, 0, 0 }; */
       
   __m128 r00 = this->_vals[0];
   __m128 r01 = this->_vals[1];
@@ -420,8 +410,8 @@ inline sfmat4x4& sfmat4x4::operator*=(const sfmat4x4& other)
   c[2] = i3[0];
   c[3] = i4[0];*/
 
-  this->_arr[8] = i1[0];
-  this->_arr[9] = i2[0];
+  this->_arr[8]  = i1[0];
+  this->_arr[9]  = i2[0];
   this->_arr[10] = i3[0];
   this->_arr[11] = i4[0];
 
@@ -462,17 +452,6 @@ inline sfmat4x4 sfmat4x4::operator/(flt32 val) const
   return sfmat4x4(_mm256_mul_ps(r12, rfl), _mm256_mul_ps(r34, rfl));
 }
 
-inline constexpr sfmat4x4 sfmat4x4::Identity()
-{
-  return sfmat4x4
-  {
-    1.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f,
-  };
-} 
-
 inline sfmat4x4 Transpose(const sfmat4x4& m)
 {
   __m128 r1 = m._vals[0];
@@ -485,6 +464,17 @@ inline sfmat4x4 Transpose(const sfmat4x4& m)
   return sfmat4x4(r1, r2, r3, r4);
 }
 #endif // !USE_SIMD && USE_SIMD
+
+inline constexpr sfmat4x4 sfmat4x4::Identity()
+{
+  return sfmat4x4
+  {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+}
 
 inline sfmat4x4 Inverse(const sfmat4x4& m)
 {
@@ -532,6 +522,7 @@ inline std::ostream& operator<<(std::ostream& os, const sfmat4x4& m)
 inline constexpr sfmat4x4 sfmat4x4::zero     = sfmat4x4();
 inline constexpr sfmat4x4 sfmat4x4::identity = sfmat4x4::Identity();
 
+#ifdef USE_SIMD
 inline sfvec4 sfvec4::operator*(const sfmat4& other) const
 {
   sfvec4 v = this->_vals;
@@ -544,6 +535,25 @@ inline sfvec4 sfvec4::operator*(const sfmat4& other) const
 
   return sfvec4(x, y, z, w);
 }
+#else
+inline sfvec4 sfvec4::operator*(const sfmat4& other) const
+{
+  sfmat4x4 m = Transpose(other);
+
+  sfvec4 tm0 = *this * m.rows[0];
+  sfvec4 tm1 = *this * m.rows[1];
+  sfvec4 tm2 = *this * m.rows[2];
+  sfvec4 tm3 = *this * m.rows[3];
+
+  return sfvec4
+  {
+    tm0.x + tm0.y + tm0.z + tm0.w,
+    tm1.x + tm1.y + tm1.z + tm1.w,
+    tm2.x + tm2.y + tm2.z + tm2.w,
+    tm3.x + tm3.y + tm3.z + tm3.w
+  };
+}
+#endif
 
 //================ Implementation Ends ================//
 ENMA_NS_END
